@@ -62,7 +62,6 @@ public class LoginFragment extends PlaceholderFragment {
 		
 		// TODO
 		editUser.setText("tsanie");
-		editPass.setText("scyzcl34");
 		
 		layout_login = rootView.findViewById(R.id.layoutLogin);
 		loading = (ProgressBar) rootView.findViewById(R.id.progressBar);
