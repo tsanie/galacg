@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GalAcg</string>
+    <string name="title_section1">登录</string>
+    <string name="title_section2">文章列表</string>
+    <string name="title_section3">个人设置</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_search">Search</string>
+    <string name="action_settings">设置</string>
+    
+    <string name="login_username">用户名：</string>
+    <string name="login_password">密码：</string>
+    <string name="login_button">登录</string>
+    
+    <string name="header_torefresh">下拉即可刷新</string>
+    <string name="header_willrefresh">松开立即刷新</string>
+    <string name="header_refreshing">正在刷新…</string>
+    
+</resources>
