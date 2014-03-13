@@ -4,12 +4,15 @@ import java.io.Serializable;
 
 public class ArchiveItem implements Serializable {
 	private static final long serialVersionUID = -5787846602756413191L;
-	
+
 	private long id;
+	private boolean bookmark;
 	private String title;
 	private String clicks;
 	private String author;
 	private String preview;
+	private String month;
+	private String day;
 	private boolean loading;
 
 	public long getId() {
@@ -18,6 +21,14 @@ public class ArchiveItem implements Serializable {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public boolean isBookmark() {
+		return bookmark;
+	}
+
+	public void setBookmark(boolean bookmark) {
+		this.bookmark = bookmark;
 	}
 
 	public String getTitle() {
@@ -50,6 +61,22 @@ public class ArchiveItem implements Serializable {
 
 	public void setPreview(String preview) {
 		this.preview = preview;
+	}
+
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	public String getDay() {
+		return day;
+	}
+
+	public void setDay(String day) {
+		this.day = day;
 	}
 
 	public boolean isLoading() {

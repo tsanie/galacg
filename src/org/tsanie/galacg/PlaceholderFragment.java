@@ -45,21 +45,16 @@ public class PlaceholderFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_simple, container,
-				false);
-		TextView textView = (TextView) rootView
-				.findViewById(R.id.section_label);
-		textView.setText(Integer.toString(getArguments().getInt(
-				ARG_SECTION_NUMBER)));
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_simple, container, false);
+		TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+		textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
 		return rootView;
 	}
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		((MainActivity) activity).onSectionAttached(getArguments().getInt(
-				ARG_SECTION_NUMBER));
+		((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
 	}
 }

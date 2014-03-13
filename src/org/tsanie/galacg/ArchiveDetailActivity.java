@@ -59,8 +59,7 @@ public class ArchiveDetailActivity extends Activity {
 
 		case R.id.action_download:
 			// TODO
-			Toast.makeText(this, "TODO will download.", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "TODO will download.", Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

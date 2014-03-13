@@ -6,7 +6,9 @@
     <org.tsanie.galacg.ui.ArchiveListView
         android:id="@+id/archiveListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_repeat" >
+
     </org.tsanie.galacg.ui.ArchiveListView>
 
     <ProgressBar

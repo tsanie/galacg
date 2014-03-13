@@ -8,10 +8,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.tsanie.galacg.fragments.LoginFragment" >
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/layoutLoginDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/section_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/buttonLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp"
+            android:minHeight="32dip"
+            android:text="@string/logout_button" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layoutLogin"
@@ -37,7 +53,6 @@
 
                 <requestFocus />
             </EditText>
-
         </LinearLayout>
 
         <LinearLayout
@@ -55,7 +70,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textPassword" />
-
         </LinearLayout>
 
         <Button
@@ -65,7 +79,6 @@
             android:layout_gravity="right"
             android:minHeight="32dp"
             android:text="@string/login_button" />
-
     </LinearLayout>
 
     <ProgressBar

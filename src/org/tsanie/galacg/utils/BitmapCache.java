@@ -13,16 +13,13 @@ public class BitmapCache {
 	private ConcurrentHashMap<Long, SoftReference<Bitmap>> secondCache;
 
 	public BitmapCache() {
-		firstCache = new LinkedHashMap<Long, Bitmap>(MAX_CAPACITY / 2, 0.75f,
-				true) {
+		firstCache = new LinkedHashMap<Long, Bitmap>(MAX_CAPACITY / 2, 0.75f, true) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected boolean removeEldestEntry(
-					java.util.Map.Entry<Long, Bitmap> eldest) {
+			protected boolean removeEldestEntry(java.util.Map.Entry<Long, Bitmap> eldest) {
 				if (size() > MAX_CAPACITY) {
-					secondCache.put(eldest.getKey(), new SoftReference<Bitmap>(
-							eldest.getValue()));
+					secondCache.put(eldest.getKey(), new SoftReference<Bitmap>(eldest.getValue()));
 					// Log.w("removeEldestEntry",
 					// String.valueOf(secondCache.size()));
 					return true;

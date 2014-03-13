@@ -115,26 +115,27 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.item_archive, null);
 			holder = new Holder();
-			holder.textTitle = (TextView) convertView
-					.findViewById(R.id.textItemTitle);
-			holder.textDetail = (TextView) convertView
-					.findViewById(R.id.textItemDetail);
-			holder.textAuthor = (TextView) convertView
-					.findViewById(R.id.textItemAuthor);
-			holder.imagePreview = (ImageView) convertView
-					.findViewById(R.id.imageItemPreview);
-			holder.progress = (ProgressBar) convertView
-					.findViewById(R.id.progressItemPreview);
+			holder.textMonth = (TextView) convertView.findViewById(R.id.textItemMonth);
+			holder.textDay = (TextView) convertView.findViewById(R.id.textItemDay);
+			holder.textTitle = (TextView) convertView.findViewById(R.id.textItemTitle);
+			holder.textDetail = (TextView) convertView.findViewById(R.id.textItemDetail);
+			holder.textAuthor = (TextView) convertView.findViewById(R.id.textItemAuthor);
+			holder.imagePreview = (ImageView) convertView.findViewById(R.id.imageItemPreview);
+			holder.imageBookmark = (ImageView) convertView.findViewById(R.id.imageItemBookmark);
+			holder.progress = (ProgressBar) convertView.findViewById(R.id.progressItemPreview);
 			convertView.setTag(holder);
 		} else {
 			holder = (Holder) convertView.getTag();
 		}
 
 		final ArchiveItem item = list.get(position);
+		holder.textMonth.setText(item.getMonth());
+		holder.textDay.setText(item.getDay());
 		holder.textTitle.setText(item.getTitle());
 		holder.textDetail.setText(item.getClicks());
 		holder.textAuthor.setText(item.getAuthor());
 
+		holder.imageBookmark.setVisibility(item.isBookmark() ? View.VISIBLE : View.GONE);
 		holder.imagePreview.setVisibility(View.GONE);
 		holder.progress.setVisibility(View.GONE);
 
@@ -189,8 +190,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 		if (bmp == null) {
 			// 下载
 			try {
-				byte[] data = new HttpHelper().setUrl(fItem.getPreview())
-						.getBytes(null);
+				byte[] data = new HttpHelper().setUrl(fItem.getPreview()).getBytes(null);
 				// BitmapFactory.Options opts = new BitmapFactory.Options();
 				// opts.inJustDecodeBounds = true;
 				// BitmapFactory.decodeByteArray(data, 0, data.length, opts);
@@ -208,9 +208,9 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 				Log.e("ArchiveListAdapter.loadPreview", ex.getMessage(), ex);
 			}
 		}
-		// Log.w("bmp(" + fItem.getPreview() + ")", String.valueOf(bmp));
 
 		if (bmp == null) {
+			Log.w("bmp(" + fItem.getPreview() + ")", String.valueOf(bmp));
 			// 最后刷新之后1000ms后重试
 			try {
 				Thread.sleep(1000);
@@ -247,8 +247,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 			if (!isLoadingMore) {
 				// 滑动动画停止
 				int count = getCount();
-				if (count > 0
-						&& (this.firstItemIndex + this.visibleItemCount >= count)) {
+				if (count > 0 && (this.firstItemIndex + this.visibleItemCount >= count)) {
 					if (onLoadMore != null) {
 						isLoadingMore = true;
 						listView.setFooterVisible(true);
@@ -261,15 +260,13 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem,
-			int visibleItemCount, int totalItemCount) {
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		this.firstItemIndex = firstVisibleItem;
 		this.visibleItemCount = visibleItemCount;
 	}
 
 	private Bitmap getCachePreview(String md5) {
-		File cache = new File(listView.getContext().getCacheDir().getAbsolutePath()
-				+ "/previews/" + md5);
+		File cache = new File(listView.getContext().getCacheDir().getAbsolutePath() + "/previews/" + md5);
 		if (cache.exists()) {
 			String file = cache.getAbsolutePath();
 
@@ -294,12 +291,10 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	}
 
 	private void setCachePreview(String md5, byte[] data) {
-		File cache = new File(listView.getContext().getCacheDir().getAbsolutePath()
-				+ "/previews");
+		File cache = new File(listView.getContext().getCacheDir().getAbsolutePath() + "/previews");
 		cache.mkdirs();
 		try {
-			FileOutputStream fos = new FileOutputStream(cache.getAbsolutePath()
-					+ "/" + md5);
+			FileOutputStream fos = new FileOutputStream(cache.getAbsolutePath() + "/" + md5);
 			fos.write(data);
 			fos.flush();
 			fos.close();
@@ -410,10 +405,13 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	 * @author Tsanie
 	 */
 	class Holder {
+		public TextView textMonth;
+		public TextView textDay;
 		public TextView textTitle;
 		public TextView textDetail;
 		public TextView textAuthor;
 		public ImageView imagePreview;
+		public ImageView imageBookmark;
 		public ProgressBar progress;
 	}
 }

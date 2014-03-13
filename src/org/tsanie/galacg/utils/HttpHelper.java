@@ -19,6 +19,8 @@ import android.os.Build;
 
 public class HttpHelper {
 	private static final int BUFFER = 1024;
+	private static final int CONNECT_TIMEOUT = 8000;
+	private static final int READ_TIMEOUT = 12000;
 
 	private String url;
 	private HashMap<String, String> headers;
@@ -27,9 +29,7 @@ public class HttpHelper {
 	public HttpHelper() {
 		headers = new HashMap<String, String>();
 		cookie = new CookieManager();
-		addHeader("Accept-Encoding", "gzip,deflate").addHeader(
-				"Accept-Language",
-				"zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-CN;q=0.2");
+		addHeader("Accept-Encoding", "gzip,deflate").addHeader("Accept-Language", "zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-CN;q=0.2");
 	}
 
 	public CookieManager getCookie() {
@@ -53,12 +53,7 @@ public class HttpHelper {
 	}
 
 	public HttpHelper addMobile() {
-		String userAgent = "Mozilla/5.0 (Linux; Android "
-				+ Build.VERSION.RELEASE
-				+ "; "
-				+ Build.DEVICE
-				+ " Build/"
-				+ Build.ID
+		String userAgent = "Mozilla/5.0 (Linux; Android " + Build.VERSION.RELEASE + "; " + Build.DEVICE + " Build/" + Build.ID
 				+ ") AppleWebKit/537.36 (KHTML, like Gecko) Wallpaper/1.1 Mobile Safari/537.36";
 		return addHeader("User-Agent", userAgent);
 	}
@@ -69,8 +64,8 @@ public class HttpHelper {
 			URL url = new URL(this.url);
 			conn = (HttpURLConnection) url.openConnection();
 			// conn.setInstanceFollowRedirects(false);
-			conn.setConnectTimeout(6000);
-			conn.setReadTimeout(6000);
+			conn.setConnectTimeout(CONNECT_TIMEOUT);
+			conn.setReadTimeout(READ_TIMEOUT);
 			for (String kv : headers.keySet()) {
 				conn.addRequestProperty(kv, headers.get(kv));
 			}
@@ -78,8 +73,7 @@ public class HttpHelper {
 			InputStream reader = conn.getInputStream();
 			// this.cookie = new
 			// CookieManager(conn.getHeaderFields().get("Set-Cookie"));
-			return readFromResponse(reader, conn.getContentEncoding(),
-					conn.getContentLength(), onReading);
+			return readFromResponse(reader, conn.getContentEncoding(), conn.getContentLength(), onReading);
 		} catch (Exception e) {
 			return getExceptions(e);
 		} finally {
@@ -95,8 +89,8 @@ public class HttpHelper {
 			URL url = new URL(this.url);
 			conn = (HttpURLConnection) url.openConnection();
 			// conn.setInstanceFollowRedirects(false);
-			conn.setConnectTimeout(6000);
-			conn.setReadTimeout(6000);
+			conn.setConnectTimeout(CONNECT_TIMEOUT);
+			conn.setReadTimeout(READ_TIMEOUT);
 			for (String kv : headers.keySet()) {
 				conn.addRequestProperty(kv, headers.get(kv));
 			}
@@ -110,8 +104,7 @@ public class HttpHelper {
 					ins = new DeflaterInputStream(ins);
 				}
 			}
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					ins));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ins));
 			String line;
 			StringBuilder result = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
@@ -140,8 +133,8 @@ public class HttpHelper {
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setInstanceFollowRedirects(false);
 			conn.setRequestMethod("POST");
-			conn.setConnectTimeout(6000);
-			conn.setReadTimeout(6000);
+			conn.setConnectTimeout(CONNECT_TIMEOUT);
+			conn.setReadTimeout(READ_TIMEOUT);
 			conn.setDoOutput(true);
 			for (String kv : headers.keySet()) {
 				conn.addRequestProperty(kv, headers.get(kv));
@@ -155,8 +148,7 @@ public class HttpHelper {
 
 			InputStream reader = conn.getInputStream();
 			this.cookie.addCookies(conn.getHeaderFields().get("Set-Cookie"));
-			return readFromResponse(reader,
-					conn.getHeaderField("Content-Encoding"), 0, null);
+			return readFromResponse(reader, conn.getHeaderField("Content-Encoding"), 0, null);
 		} catch (Exception e) {
 			return getExceptions(e);
 		} finally {
@@ -166,8 +158,7 @@ public class HttpHelper {
 		}
 	}
 
-	private byte[] readFromResponse(InputStream reader, String encoding,
-			int total, OnReading onReading) throws IOException {
+	private byte[] readFromResponse(InputStream reader, String encoding, int total, OnReading onReading) throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		if (encoding != null) {
 			if ("gzip".equals(encoding)) {
@@ -193,8 +184,7 @@ public class HttpHelper {
 	}
 
 	private static String getExceptionString(Throwable e) {
-		String result = "{\"code\":-1,\"type\":\"" + e.getClass()
-				+ "\",\"msg\":\"" + e.getMessage() + "\"";
+		String result = "{\"code\":-1,\"type\":\"" + e.getClass() + "\",\"msg\":\"" + e.getMessage() + "\"";
 		Throwable cause = e.getCause();
 		if (cause != null) {
 			result += ",\"cause\":" + getExceptionString(cause);

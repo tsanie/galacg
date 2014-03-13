@@ -20,6 +20,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,16 +47,14 @@ public class MainFragment extends PlaceholderFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_main, container,
-				false);
-		listView = (ArchiveListView) rootView
-				.findViewById(R.id.archiveListView);
-		progressBarLoading = (ProgressBar) rootView
-				.findViewById(R.id.progressBarMainLoading);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+		listView = (ArchiveListView) rootView.findViewById(R.id.archiveListView);
+		progressBarLoading = (ProgressBar) rootView.findViewById(R.id.progressBarMainLoading);
 
 		adapter = new ArchiveListAdapter(listView);
+
+		listView.setDividerHeight(0);
 		listView.setAdapter(adapter);
 		listView.setOnScrollListener(adapter);
 
@@ -73,12 +72,10 @@ public class MainFragment extends PlaceholderFragment {
 		});
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent intent = new Intent(getActivity(), ArchiveDetailActivity.class);
 				Bundle bundle = new Bundle();
-				bundle.putSerializable("item",
-						(ArchiveItem) adapter.getItem(position));
+				bundle.putSerializable("item", (ArchiveItem) adapter.getItem(position));
 				intent.putExtras(bundle);
 				startActivity(intent);
 			}
@@ -114,20 +111,21 @@ public class MainFragment extends PlaceholderFragment {
 	private ArrayList<ArchiveItem> doGetArchives(boolean refresh, int page) {
 		ArrayList<ArchiveItem> result = new ArrayList<ArchiveItem>();
 		try {
-			String html = new HttpTasks().setCookie(MainActivity.getCookie())
-					.getHomePage(refresh, page, getActivity());
-			Pattern p = Pattern
-					.compile(
-							"<section class=\"visible-md visible-lg\">[^<]*?<div class=\"title-article\">[^<]*?"
-									// Id, 标题
-									+ "<h1><a href=\"http://www.galacg.me/archives/([0-9]+?)\">([^<]+?)</a></h1>[\\s\\S]*?"
-									// 作者
-									+ "<a [^>]*?rel=\"author\"[^>]*?>([^<]+?)</a>[\\s\\S]*?"
-									// 点击数
-									+ "<i class=\"fa fa-eye\"></i>([^<]+?)</span>[\\s\\S]*?<div class=\"alert alert-zan\">[^<]*?"
-									// 图片(如果有的话)
-									+ "<p[^>]*?>[\\s\\S]*?(<img[^>]*? src=\"([^\"]+?)\"[\\s\\S]*?)?</div>",
-							Pattern.MULTILINE);
+			String html = new HttpTasks().setCookie(MainActivity.getCookie()).getHomePage(refresh, page, getActivity());
+			Pattern p = Pattern.compile("<div class=\"article well clearfix\">[\\s\\S]*?"
+					// 是否有书签
+					+ "(<i class=\"fa fa-bookmark article-stick visible-md visible-lg\"></i>[\\s\\S]*?)?"
+					// 发布日期
+					+ "<span class=\"month\">([^<]+?)</span>[\\s\\S]*?<span class=\"day\">([^<]+?)</span>[\\s\\S]*?"
+					+ "<section class=\"visible-md visible-lg\">[^<]*?<div class=\"title-article\">[^<]*?"
+					// Id, 标题
+					+ "<h1><a href=\"http://www.galacg.me/archives/([0-9]+?)\">([^<]+?)</a></h1>[\\s\\S]*?"
+					// 作者
+					+ "<a [^>]*?rel=\"author\"[^>]*?>([^<]+?)</a>[\\s\\S]*?"
+					// 点击数
+					+ "<i class=\"fa fa-eye\"></i>([^<]+?)</span>[\\s\\S]*?<div class=\"alert alert-zan\">[^<]*?"
+					// 图片(如果有的话)
+					+ "<p[^>]*?>[\\s\\S]*?(<img[^>]*? src=\"([^\"]+?)\"[\\s\\S]*?)?</div>", Pattern.MULTILINE);
 			Matcher m = p.matcher(html);
 			while (m.find()) {
 				// for (int i = 1; i < m.groupCount() + 1; i++) {
@@ -138,11 +136,14 @@ public class MainFragment extends PlaceholderFragment {
 				// }
 				// }
 				ArchiveItem item = new ArchiveItem();
-				item.setId(Long.parseLong(m.group(1)));
-				item.setTitle(m.group(2).trim());
-				item.setAuthor(m.group(3).trim());
-				item.setClicks(m.group(4).trim());
-				item.setPreview(m.group(6));
+				item.setBookmark(m.group(1) != null);
+				item.setMonth(m.group(2));
+				item.setDay(m.group(3));
+				item.setId(Long.parseLong(m.group(4)));
+				item.setTitle(Html.fromHtml(m.group(5).trim()).toString());
+				item.setAuthor(Html.fromHtml(m.group(6).trim()).toString());
+				item.setClicks(m.group(7).trim());
+				item.setPreview(m.group(9));
 				result.add(item);
 			}
 
@@ -152,8 +153,7 @@ public class MainFragment extends PlaceholderFragment {
 		return result;
 	}
 
-	class RefreshArchivesTask extends
-			AsyncTask<Void, Void, ArrayList<ArchiveItem>> {
+	class RefreshArchivesTask extends AsyncTask<Void, Void, ArrayList<ArchiveItem>> {
 
 		@Override
 		protected ArrayList<ArchiveItem> doInBackground(Void... params) {
@@ -162,13 +162,12 @@ public class MainFragment extends PlaceholderFragment {
 
 		@Override
 		protected void onPostExecute(ArrayList<ArchiveItem> result) {
-			progressBarLoading.animate().alpha(0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							progressBarLoading.setVisibility(View.GONE);
-						}
-					});
+			progressBarLoading.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					progressBarLoading.setVisibility(View.GONE);
+				}
+			});
 			adapter.init(result);
 		}
 

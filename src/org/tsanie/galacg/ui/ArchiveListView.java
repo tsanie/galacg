@@ -76,14 +76,12 @@ public class ArchiveListView extends ListView {
 		this.adapter = (ArchiveListAdapter) adapter;
 		if (getHeaderViewsCount() == 0) {
 			// header
-			refresher = LayoutInflater.from(getContext()).inflate(
-					R.layout.listview_header, this, false);
+			refresher = LayoutInflater.from(getContext()).inflate(R.layout.listview_header, this, false);
 			this.addHeaderView(refresher);
 		}
 		if (getFooterViewsCount() == 0) {
 			// footer
-			footer = LayoutInflater.from(getContext()).inflate(
-					R.layout.listview_footer, this, false);
+			footer = LayoutInflater.from(getContext()).inflate(R.layout.listview_footer, this, false);
 			this.addFooterView(footer);
 			footer.setVisibility(View.GONE);
 		}
@@ -98,8 +96,7 @@ public class ArchiveListView extends ListView {
 			switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				touchY = y;
-				if (state != STATE_REFRESHING
-						&& adapter.getFirstItemIndex() == 0) {
+				if (state != STATE_REFRESHING && adapter.getFirstItemIndex() == 0) {
 					state = STATE_REFRESH_ABLE;
 				}
 				break;
@@ -125,8 +122,7 @@ public class ArchiveListView extends ListView {
 			case MotionEvent.ACTION_UP:
 				// preload
 				if (onPreload != null) {
-					onPreload.onPreload(adapter.getFirstItemIndex(),
-							adapter.getVisibleItemCount());
+					onPreload.onPreload(adapter.getFirstItemIndex(), adapter.getVisibleItemCount());
 				}
 
 				// refresh
@@ -160,11 +156,11 @@ public class ArchiveListView extends ListView {
 	public void setFooterVisible(boolean visible) {
 		footer.setPadding(0, (visible ? 0 : -footerHeight), 0, 0);
 		if (visible) {
-			//footer.findViewById(R.id.progressBarFooter).setVisibility(View.VISIBLE);
+			// footer.findViewById(R.id.progressBarFooter).setVisibility(View.VISIBLE);
 			footer.setSelected(true);
 		}
 	}
-	
+
 	private void refreshOver() {
 		adapter.clearLoadingBitmap();
 		animateToY(-refresherHeight, -refresherHeight, STATE_DONE);
@@ -180,46 +176,37 @@ public class ArchiveListView extends ListView {
 			return;
 		}
 		lastState = state;
-		int shortAnimateTime = getResources().getInteger(
-				android.R.integer.config_shortAnimTime);
+		int shortAnimateTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 		View imv = refresher.findViewById(R.id.imageHeaderRefresher);
-		TextView textView = (TextView) refresher
-				.findViewById(R.id.textViewHeaderRefresher);
+		TextView textView = (TextView) refresher.findViewById(R.id.textViewHeaderRefresher);
 
 		if (state == STATE_REFRESHING) {
 			imv.setVisibility(GONE);
-			refresher.findViewById(R.id.progressHeaderRefresher).setVisibility(
-					VISIBLE);
-			textView.setText(getResources().getString(
-					R.string.header_refreshing));
+			refresher.findViewById(R.id.progressHeaderRefresher).setVisibility(VISIBLE);
+			textView.setText(getResources().getString(R.string.header_refreshing));
 		} else {
 			imv.setVisibility(VISIBLE);
-			refresher.findViewById(R.id.progressHeaderRefresher).setVisibility(
-					GONE);
+			refresher.findViewById(R.id.progressHeaderRefresher).setVisibility(GONE);
 			if (state == STATE_START_REFRESH) {
 				imv.animate().setDuration(shortAnimateTime).rotation(0);
-				textView.setText(getResources().getString(
-						R.string.header_torefresh));
+				textView.setText(getResources().getString(R.string.header_torefresh));
 			} else if (state == STATE_TO_REFRESH) {
 				imv.animate().setDuration(shortAnimateTime).rotation(180);
-				textView.setText(getResources().getString(
-						R.string.header_willrefresh));
+				textView.setText(getResources().getString(R.string.header_willrefresh));
 			}
 		}
 	}
 
 	private void animateToY(int offset, final int y, final int state) {
-		int shortAnimateTime = getResources().getInteger(
-				android.R.integer.config_shortAnimTime);
-		this.animate().setDuration(shortAnimateTime).y(offset)
-				.setListener(new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						setY(0);
-						refresher.setPadding(0, y, 0, 0);
-						ArchiveListView.this.state = state;
-					}
-				});
+		int shortAnimateTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+		this.animate().setDuration(shortAnimateTime).y(offset).setListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				setY(0);
+				refresher.setPadding(0, y, 0, 0);
+				ArchiveListView.this.state = state;
+			}
+		});
 	}
 
 	class RefreshTask extends AsyncTask<Void, Void, Void> {

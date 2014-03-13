@@ -12,6 +12,7 @@ import org.tsanie.galacg.utils.HttpTasks;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
@@ -20,11 +21,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LoginFragment extends PlaceholderFragment {
 
@@ -40,7 +43,7 @@ public class LoginFragment extends PlaceholderFragment {
 	private EditText editUser;
 	private EditText editPass;
 	private View layout_login;
-	private Button buttonLogin;
+	private View layout_login_detail;
 
 	private void setCookie(String cookie) {
 		this.cookie = cookie;
@@ -52,40 +55,66 @@ public class LoginFragment extends PlaceholderFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_login, container,
-				false);
-		textResult = (TextView) rootView.findViewById(R.id.section_label);
-		editUser = (EditText) rootView.findViewById(R.id.editUsername);
-		editPass = (EditText) rootView.findViewById(R.id.editPassword);
-		
-		// TODO
-		editUser.setText("tsanie");
-		
-		layout_login = rootView.findViewById(R.id.layoutLogin);
-		loading = (ProgressBar) rootView.findViewById(R.id.progressBar);
-		buttonLogin = (Button) rootView.findViewById(R.id.buttonLogin);
-		buttonLogin.setOnClickListener(new OnClickListener() {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+		layout_login_detail = rootView.findViewById(R.id.layoutLoginDetail);
+		Button buttonLogout = (Button) rootView.findViewById(R.id.buttonLogout);
+		buttonLogout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String user = editUser.getText().toString();
-				String pass = editPass.getText().toString();
-				layout_login.animate().alpha(0)
-						.setListener(new AnimatorListenerAdapter() {
-							@Override
-							public void onAnimationEnd(Animator animation) {
-								layout_login.setVisibility(View.GONE);
-							}
-						});
-				loading.setAlpha(0);
-				loading.setVisibility(View.VISIBLE);
-				loading.animate().alpha(1);
-
-				new LoginTask().execute(user, pass);
+				// µÇ³ö
+				setCookie(null);
+				setUserPreference(null);
+				layout_login_detail.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						layout_login_detail.setVisibility(View.GONE);
+					}
+				});
+				layout_login.setAlpha(0);
+				layout_login.setVisibility(View.VISIBLE);
+				layout_login.animate().alpha(1);
 			}
 		});
 
+		textResult = (TextView) rootView.findViewById(R.id.section_label);
+		editUser = (EditText) rootView.findViewById(R.id.editUsername);
+		editPass = (EditText) rootView.findViewById(R.id.editPassword);
+
+		// TODO
+		editUser.setText("tsanie");
+
+		layout_login = rootView.findViewById(R.id.layoutLogin);
+		loading = (ProgressBar) rootView.findViewById(R.id.progressBar);
+		Button buttonLogin = (Button) rootView.findViewById(R.id.buttonLogin);
+		buttonLogin.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// µÇÈë
+				InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+				View currentFocus = getActivity().getCurrentFocus();
+				if (currentFocus != null) {
+					input.hideSoftInputFromWindow(currentFocus.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+
+				layout_login.animate().alpha(0);
+
+				loading.setAlpha(0);
+				loading.setVisibility(View.VISIBLE);
+				loading.animate().alpha(1).setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						String user = editUser.getText().toString();
+						String pass = editPass.getText().toString();
+
+						new LoginTask().execute(user, pass);
+					}
+				});
+			}
+		});
+
+		layout_login_detail.setVisibility(View.INVISIBLE);
 		layout_login.setVisibility(View.INVISIBLE);
 		return rootView;
 	}
@@ -96,10 +125,13 @@ public class LoginFragment extends PlaceholderFragment {
 	}
 
 	private void setUserPreference(String cookie) {
-		SharedPreferences userInfo = getActivity().getSharedPreferences(
-				PREF_USER_INFO, 0);
+		SharedPreferences userInfo = getActivity().getSharedPreferences(PREF_USER_INFO, 0);
 		Editor editor = userInfo.edit();
-		editor.putString(USER_COOKIE, cookie);
+		if (cookie == null) {
+			editor.remove(USER_COOKIE);
+		} else {
+			editor.putString(USER_COOKIE, cookie);
+		}
 		editor.commit();
 	}
 
@@ -111,8 +143,7 @@ public class LoginFragment extends PlaceholderFragment {
 	class PreferenceTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			SharedPreferences userInfo = getActivity().getSharedPreferences(
-					PREF_USER_INFO, 0);
+			SharedPreferences userInfo = getActivity().getSharedPreferences(PREF_USER_INFO, 0);
 			setCookie(userInfo.getString(USER_COOKIE, null));
 			if (getCookie() != null) {
 				return true;
@@ -123,7 +154,7 @@ public class LoginFragment extends PlaceholderFragment {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
-				layout_login.setVisibility(View.GONE);
+				layout_login_detail.setVisibility(View.VISIBLE);
 				loading.setAlpha(0);
 				loading.setVisibility(View.VISIBLE);
 				loading.animate().alpha(1);
@@ -153,14 +184,13 @@ public class LoginFragment extends PlaceholderFragment {
 		@Override
 		protected void onPostExecute(String result) {
 			username = result;
-			loading.animate().alpha(0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							loading.setVisibility(View.GONE);
-							textResult.setText(username);
-						}
-					});
+			loading.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					loading.setVisibility(View.GONE);
+					textResult.setText(username);
+				}
+			});
 		}
 	}
 
@@ -179,27 +209,20 @@ public class LoginFragment extends PlaceholderFragment {
 			String password = params[1];
 			try {
 				user = URLEncoder.encode(user, Charset.defaultCharset().name());
-				password = URLEncoder.encode(password, Charset.defaultCharset()
-						.name());
+				password = URLEncoder.encode(password, Charset.defaultCharset().name());
 			} catch (UnsupportedEncodingException e) {
 				Log.e("LoginTask.doInBackground", e.getMessage(), e);
 				return false;
 			}
 
-			HttpHelper http = new HttpHelper()
-					.setUrl("http://www.galacg.me/wp-login.php")
-					.addHeader("Cache-Control", "max-age=0")
-					.addHeader("Origin", "http://www.galacg.me")
-					.addHeader("Referer", "http://www.galacg.me/wp-login.php")
-					.addHeader("Cookie",
-							"wordpress_test_cookie=WP+Cookie+check")
-					.addMobile();
+			HttpHelper http = new HttpHelper().setUrl("http://www.galacg.me/wp-login.php").addHeader("Cache-Control", "max-age=0")
+					.addHeader("Origin", "http://www.galacg.me").addHeader("Referer", "http://www.galacg.me/wp-login.php")
+					.addHeader("Cookie", "wordpress_test_cookie=WP+Cookie+check").addMobile();
 			http.postBytes("log=" + user + "&pwd=" + password + "&testcookie=1");
 			setCookie(http.getCookie().toString());
 
 			if (http.getCookie().containsKey("duoshuo_token")) {
-				username = new HttpTasks().setCookie(getCookie()).getUsername(
-						getActivity());
+				username = new HttpTasks().setCookie(getCookie()).getUsername(getActivity());
 				setUserPreference(getCookie());
 				return true;
 			}
@@ -208,14 +231,31 @@ public class LoginFragment extends PlaceholderFragment {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			loading.animate().alpha(0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							loading.setVisibility(View.GONE);
-							textResult.setText(username);
-						}
-					});
+			if (result) {
+				layout_login.setVisibility(View.GONE);
+
+				textResult.setText(username);
+				layout_login_detail.setAlpha(0);
+				layout_login_detail.setVisibility(View.VISIBLE);
+				layout_login_detail.animate().alpha(1);
+
+				loading.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						loading.setVisibility(View.GONE);
+					}
+				});
+			} else {
+				Toast.makeText(getActivity(), "µÇÂ¼Ê§°Ü", Toast.LENGTH_LONG).show();
+				layout_login.animate().alpha(1);
+
+				loading.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						loading.setVisibility(View.GONE);
+					}
+				});
+			}
 		}
 	}
 }
