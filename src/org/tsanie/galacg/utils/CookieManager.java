@@ -7,7 +7,7 @@ public class CookieManager {
 	private HashMap<String, String> cookies;
 
 	public CookieManager() {
-		cookies = new HashMap<>();
+		cookies = new HashMap<String, String>();
 	}
 
 	public CookieManager(String header) {

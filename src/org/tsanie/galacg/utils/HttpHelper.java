@@ -104,13 +104,10 @@ public class HttpHelper {
 			InputStream ins = conn.getInputStream();
 			String encoding = conn.getHeaderField("Content-Encoding");
 			if (encoding != null) {
-				switch (encoding) {
-				case "gzip":
+				if ("gzip".equals(encoding)) {
 					ins = new GZIPInputStream(ins);
-					break;
-				case "deflate":
+				} else if ("deflate".equals(encoding)) {
 					ins = new DeflaterInputStream(ins);
-					break;
 				}
 			}
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -173,13 +170,10 @@ public class HttpHelper {
 			int total, OnReading onReading) throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		if (encoding != null) {
-			switch (encoding) {
-			case "gzip":
+			if ("gzip".equals(encoding)) {
 				reader = new GZIPInputStream(reader);
-				break;
-			case "deflate":
+			} else if ("deflate".equals(encoding)) {
 				reader = new DeflaterInputStream(reader);
-				break;
 			}
 		}
 		byte[] buffer = new byte[BUFFER];

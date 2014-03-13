@@ -1,6 +1,10 @@
 package org.tsanie.galacg.ui;
 
-public class ArchiveItem {
+import java.io.Serializable;
+
+public class ArchiveItem implements Serializable {
+	private static final long serialVersionUID = -5787846602756413191L;
+	
 	private long id;
 	private String title;
 	private String clicks;

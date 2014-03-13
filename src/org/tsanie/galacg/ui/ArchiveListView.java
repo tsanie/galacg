@@ -23,7 +23,10 @@ public class ArchiveListView extends ListView {
 	private static final int STATE_REFRESHING = 4;
 
 	private View refresher;
+	private View footer;
 	private int refresherHeight = -1;
+	private int footerHeight = -1;
+
 	private ArchiveListAdapter adapter;
 	private OnListViewRefresh onRefresh;
 	private OnListViewPreload onPreload;
@@ -61,6 +64,11 @@ public class ArchiveListView extends ListView {
 			refresherHeight = refresher.getMeasuredHeight();
 			refresher.setPadding(0, -refresherHeight, 0, 0);
 		}
+		if (footerHeight < 0 && footer != null) {
+			measureChild(footer, widthMeasureSpec, heightMeasureSpec);
+			footerHeight = footer.getMeasuredHeight();
+			footer.setPadding(0, -footerHeight, 0, 0);
+		}
 	}
 
 	@Override
@@ -71,6 +79,13 @@ public class ArchiveListView extends ListView {
 			refresher = LayoutInflater.from(getContext()).inflate(
 					R.layout.listview_header, this, false);
 			this.addHeaderView(refresher);
+		}
+		if (getFooterViewsCount() == 0) {
+			// footer
+			footer = LayoutInflater.from(getContext()).inflate(
+					R.layout.listview_footer, this, false);
+			this.addFooterView(footer);
+			footer.setVisibility(View.GONE);
 		}
 		super.setAdapter(adapter);
 	}
@@ -142,6 +157,14 @@ public class ArchiveListView extends ListView {
 		return super.onTouchEvent(ev);
 	}
 
+	public void setFooterVisible(boolean visible) {
+		footer.setPadding(0, (visible ? 0 : -footerHeight), 0, 0);
+		if (visible) {
+			//footer.findViewById(R.id.progressBarFooter).setVisibility(View.VISIBLE);
+			footer.setSelected(true);
+		}
+	}
+	
 	private void refreshOver() {
 		adapter.clearLoadingBitmap();
 		animateToY(-refresherHeight, -refresherHeight, STATE_DONE);

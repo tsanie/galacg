@@ -10,7 +10,6 @@ import org.tsanie.galacg.R;
 import org.tsanie.galacg.utils.BitmapCache;
 import org.tsanie.galacg.utils.HttpHelper;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -34,17 +33,17 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	private int visibleItemCount;
 	private int scrollState;
 	private LayoutInflater inflater;
-	private Context context;
+	private ArchiveListView listView;
 
 	private ArrayList<ArchiveItem> list;
 	private BitmapCache bitmapCache;
 	private OnTaskHandle onLoadMore;
 	private boolean isLoadingMore;
 
-	public ArchiveListAdapter(Context context) {
-		inflater = LayoutInflater.from(context);
-		this.context = context;
-		list = new ArrayList<>();
+	public ArchiveListAdapter(ArchiveListView listView) {
+		inflater = LayoutInflater.from(listView.getContext());
+		this.listView = listView;
+		list = new ArrayList<ArchiveItem>();
 		bitmapCache = new BitmapCache();
 	}
 
@@ -73,7 +72,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	}
 
 	public void init(Collection<? extends ArchiveItem> collection) {
-		list = new ArrayList<>(collection);
+		list = new ArrayList<ArchiveItem>(collection);
 		this.notifyDataSetChanged();
 	}
 
@@ -252,6 +251,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 						&& (this.firstItemIndex + this.visibleItemCount >= count)) {
 					if (onLoadMore != null) {
 						isLoadingMore = true;
+						listView.setFooterVisible(true);
 						new LoadMoreTask().execute();
 					}
 				}
@@ -268,7 +268,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	}
 
 	private Bitmap getCachePreview(String md5) {
-		File cache = new File(context.getCacheDir().getAbsolutePath()
+		File cache = new File(listView.getContext().getCacheDir().getAbsolutePath()
 				+ "/previews/" + md5);
 		if (cache.exists()) {
 			String file = cache.getAbsolutePath();
@@ -294,7 +294,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	}
 
 	private void setCachePreview(String md5, byte[] data) {
-		File cache = new File(context.getCacheDir().getAbsolutePath()
+		File cache = new File(listView.getContext().getCacheDir().getAbsolutePath()
 				+ "/previews");
 		cache.mkdirs();
 		try {
@@ -399,6 +399,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 			if (result && onLoadMore != null) {
 				onLoadMore.post();
 			}
+			listView.setFooterVisible(false);
 			isLoadingMore = false;
 		}
 	}

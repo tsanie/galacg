@@ -6,8 +6,9 @@
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="19" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+        android:targetSdkVersion="16" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -27,6 +28,14 @@
             android:name="org.tsanie.galacg.fragments.LoginFragment"
             android:label="@string/title_section1"
             android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+        <activity
+            android:name="org.tsanie.galacg.ArchiveDetailActivity"
+            android:label="@string/title_activity_archive_detail"
+            android:parentActivityName="org.tsanie.galacg.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.tsanie.galacg.MainActivity" />
         </activity>
     </application>
 

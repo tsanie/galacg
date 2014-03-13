@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.tsanie.galacg.ArchiveDetailActivity;
 import org.tsanie.galacg.MainActivity;
 import org.tsanie.galacg.PlaceholderFragment;
 import org.tsanie.galacg.R;
@@ -16,12 +17,14 @@ import org.tsanie.galacg.utils.HttpTasks;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ProgressBar;
 
 public class MainFragment extends PlaceholderFragment {
@@ -52,7 +55,7 @@ public class MainFragment extends PlaceholderFragment {
 		progressBarLoading = (ProgressBar) rootView
 				.findViewById(R.id.progressBarMainLoading);
 
-		adapter = new ArchiveListAdapter(getActivity());
+		adapter = new ArchiveListAdapter(listView);
 		listView.setAdapter(adapter);
 		listView.setOnScrollListener(adapter);
 
@@ -66,6 +69,18 @@ public class MainFragment extends PlaceholderFragment {
 			@Override
 			public void refreshed() {
 				adapter.init(list);
+			}
+		});
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent(getActivity(), ArchiveDetailActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("item",
+						(ArchiveItem) adapter.getItem(position));
+				intent.putExtras(bundle);
+				startActivity(intent);
 			}
 		});
 
@@ -97,7 +112,7 @@ public class MainFragment extends PlaceholderFragment {
 	}
 
 	private ArrayList<ArchiveItem> doGetArchives(boolean refresh, int page) {
-		ArrayList<ArchiveItem> result = new ArrayList<>();
+		ArrayList<ArchiveItem> result = new ArrayList<ArchiveItem>();
 		try {
 			String html = new HttpTasks().setCookie(MainActivity.getCookie())
 					.getHomePage(refresh, page, getActivity());
