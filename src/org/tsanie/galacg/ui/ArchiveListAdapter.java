@@ -147,18 +147,18 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 			holder.imagePreview.setImageBitmap(null);
 			holder.imagePreview.setVisibility(View.VISIBLE);
 
-			// ÅĞ¶ÏÊÇ·ñÕıÔÚÔØÈë
+			// åˆ¤æ–­æ˜¯å¦æ­£åœ¨è½½å…¥
 			if (!item.isLoading()) {
 
-				// ÊÔÍ¼¶ÁÈ¡»º´æ
+				// è¯•å›¾è¯»å–ç¼“å­˜
 				Bitmap bitmap = bitmapCache.getBitmapFromCache(fId);
 				if (bitmap != null) {
 					holder.progress.setVisibility(View.GONE);
 					holder.imagePreview.setImageBitmap(bitmap);
 
 				} else if (this.scrollState != OnScrollListener.SCROLL_STATE_FLING) {
-					// ²»ÔÚ»¬¶¯¶¯»­Ê±»ñÈ¡Ô¤ÀÀÍ¼
-					// ¿ªÊ¼»ñÈ¡Ô¤ÀÀÍ¼
+					// ä¸åœ¨æ»‘åŠ¨åŠ¨ç”»æ—¶è·å–é¢„è§ˆå›¾
+					// å¼€å§‹è·å–é¢„è§ˆå›¾
 					final View fView = convertView;
 					new Thread(new Runnable() {
 						@Override
@@ -183,12 +183,12 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 		fItem.setLoading(true);
 		// Log.w("loadPreview(fId = " + fItem.getId() + ")", fItem.getTitle());
 
-		// ÏÈ¼ì²é»º´æÊÇ·ñÓĞ
+		// å…ˆæ£€æŸ¥ç¼“å­˜æ˜¯å¦æœ‰
 		String md5 = getMd5(fItem.getPreview());
 		Bitmap bmp = getCachePreview(md5);
 
 		if (bmp == null) {
-			// ÏÂÔØ
+			// ä¸‹è½½
 			try {
 				byte[] data = new HttpHelper().setUrl(fItem.getPreview()).getBytes(null);
 				// BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -201,7 +201,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 
 				bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 				if (bmp != null) {
-					// »º´æ
+					// ç¼“å­˜
 					setCachePreview(md5, data);
 				}
 			} catch (Exception ex) {
@@ -211,7 +211,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 
 		if (bmp == null) {
 			Log.w("bmp(" + fItem.getPreview() + ")", String.valueOf(bmp));
-			// ×îºóË¢ĞÂÖ®ºó1000msºóÖØÊÔ
+			// æœ€ååˆ·æ–°ä¹‹å1000msåé‡è¯•
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -241,11 +241,11 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 			// + this.visibleItemCount + "\ncount: " + getCount();
 			// Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 
-			// Í¨Öª¸üĞÂ
+			// é€šçŸ¥æ›´æ–°
 			notifyDataSetChanged();
 
 			if (!isLoadingMore) {
-				// »¬¶¯¶¯»­Í£Ö¹
+				// æ»‘åŠ¨åŠ¨ç”»åœæ­¢
 				int count = getCount();
 				if (count > 0 && (this.firstItemIndex + this.visibleItemCount >= count)) {
 					if (onLoadMore != null) {
@@ -376,7 +376,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	// }
 
 	/**
-	 * ÔØÈë¸ü¶àÈÎÎñ
+	 * è½½å…¥æ›´å¤šä»»åŠ¡
 	 * 
 	 * @author Tsanie
 	 */
@@ -400,7 +400,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 	}
 
 	/**
-	 * ListViewItem Ö§³ÖÀà
+	 * ListViewItem æ”¯æŒç±»
 	 * 
 	 * @author Tsanie
 	 */

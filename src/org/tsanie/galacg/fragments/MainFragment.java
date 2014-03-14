@@ -113,18 +113,18 @@ public class MainFragment extends PlaceholderFragment {
 		try {
 			String html = new HttpTasks().setCookie(MainActivity.getCookie()).getHomePage(refresh, page, getActivity());
 			Pattern p = Pattern.compile("<div class=\"article well clearfix\">[\\s\\S]*?"
-					// ÊÇ·ñÓĞÊéÇ©
+					// æ˜¯å¦æœ‰ä¹¦ç­¾
 					+ "(<i class=\"fa fa-bookmark article-stick visible-md visible-lg\"></i>[\\s\\S]*?)?"
-					// ·¢²¼ÈÕÆÚ
+					// å‘å¸ƒæ—¥æœŸ
 					+ "<span class=\"month\">([^<]+?)</span>[\\s\\S]*?<span class=\"day\">([^<]+?)</span>[\\s\\S]*?"
 					+ "<section class=\"visible-md visible-lg\">[^<]*?<div class=\"title-article\">[^<]*?"
-					// Id, ±êÌâ
+					// Id, æ ‡é¢˜
 					+ "<h1><a href=\"http://www.galacg.me/archives/([0-9]+?)\">([^<]+?)</a></h1>[\\s\\S]*?"
-					// ×÷Õß
+					// ä½œè€…
 					+ "<a [^>]*?rel=\"author\"[^>]*?>([^<]+?)</a>[\\s\\S]*?"
-					// µã»÷Êı
+					// ç‚¹å‡»æ•°
 					+ "<i class=\"fa fa-eye\"></i>([^<]+?)</span>[\\s\\S]*?<div class=\"alert alert-zan\">[^<]*?"
-					// Í¼Æ¬(Èç¹ûÓĞµÄ»°)
+					// å›¾ç‰‡é¢„è§ˆ(å¦‚æœæœ‰çš„è¯)
 					+ "<p[^>]*?>[\\s\\S]*?(<img[^>]*? src=\"([^\"]+?)\"[\\s\\S]*?)?</div>", Pattern.MULTILINE);
 			Matcher m = p.matcher(html);
 			while (m.find()) {
