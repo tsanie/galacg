@@ -30,7 +30,7 @@ public class HttpTasks {
 
 	public String getHomePage(boolean refresh, int page, Context context) {
 		if (!refresh && context.getFileStreamPath(HOME_CACHE + page).exists()) {
-			// ÓÐ»º´æ
+			// æœ‰ç¼“å­˜
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(context.openFileInput(HOME_CACHE + page)));
 				String line;
@@ -45,10 +45,10 @@ public class HttpTasks {
 			}
 		}
 
-		// ÏÂÔØ
+		// ä¸‹è½½
 		String http = new HttpHelper().setUrl(HOME_URL + "page/" + page).addMobile().setCookie(cookie).getLines(null);
 
-		// »º´æhttp source
+		// ç¼“å­˜http source
 		try {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(HOME_CACHE + page,
 					Context.MODE_PRIVATE)));
@@ -64,7 +64,7 @@ public class HttpTasks {
 	public String getUsername(Context context) {
 		final Pattern p = Pattern.compile("<a class=\"ab-item\"[^>]*>([^<]*)<img");
 		if (context.getFileStreamPath(HOME_CACHE).exists()) {
-			// ÓÐ»º´æ
+			// æœ‰ç¼“å­˜
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(context.openFileInput(HOME_CACHE)));
 				String line;
@@ -77,7 +77,7 @@ public class HttpTasks {
 				Log.e("HttpTasks.getUsername", e.getMessage(), e);
 			}
 		} else {
-			// ÏÂÔØ
+			// ä¸‹è½½
 			String http = new HttpHelper().setUrl(HOME_URL).addMobile().setCookie(cookie).getLines(new IHandleLine() {
 				@Override
 				public Boolean readLine(String line) {
@@ -88,7 +88,7 @@ public class HttpTasks {
 				}
 			});
 
-			// »º´æhttp source
+			// ç¼“å­˜http source
 			try {
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(HOME_CACHE, Context.MODE_PRIVATE)));
 				writer.write(http);

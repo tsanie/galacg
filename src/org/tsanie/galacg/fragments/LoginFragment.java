@@ -63,7 +63,7 @@ public class LoginFragment extends PlaceholderFragment {
 		buttonLogout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// µÇ³ö
+				// ç™»å‡º
 				setCookie(null);
 				setUserPreference(null);
 				layout_login_detail.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
@@ -91,7 +91,7 @@ public class LoginFragment extends PlaceholderFragment {
 		buttonLogin.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// µÇÈë
+				// ç™»å…¥
 				InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 				View currentFocus = getActivity().getCurrentFocus();
 				if (currentFocus != null) {
@@ -136,7 +136,7 @@ public class LoginFragment extends PlaceholderFragment {
 	}
 
 	/**
-	 * ÅĞ¶ÏÓÃ»§ÉèÖÃµÄÈÎÎñ
+	 * åˆ¤æ–­ç”¨æˆ·è®¾ç½®çš„ä»»åŠ¡
 	 * 
 	 * @author Tsanie
 	 */
@@ -167,7 +167,7 @@ public class LoginFragment extends PlaceholderFragment {
 	}
 
 	/**
-	 * »ñÈ¡ÓÃ»§ÃûµÄÈÎÎñ
+	 * è·å–ç”¨æˆ·åçš„ä»»åŠ¡
 	 * 
 	 * @author Tsanie
 	 */
@@ -195,7 +195,7 @@ public class LoginFragment extends PlaceholderFragment {
 	}
 
 	/**
-	 * µÇÂ¼ÈÎÎñ
+	 * ç™»å½•ä»»åŠ¡
 	 * 
 	 * @author Tsanie
 	 */
@@ -246,7 +246,7 @@ public class LoginFragment extends PlaceholderFragment {
 					}
 				});
 			} else {
-				Toast.makeText(getActivity(), "µÇÂ¼Ê§°Ü", Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity(), "ç™»å½•å¤±è´¥", Toast.LENGTH_LONG).show();
 				layout_login.animate().alpha(1);
 
 				loading.animate().alpha(0).setListener(new AnimatorListenerAdapter() {

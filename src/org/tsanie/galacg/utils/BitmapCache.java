@@ -60,7 +60,7 @@ public class BitmapCache {
 		synchronized (firstCache) {
 			bmp = firstCache.get(url);
 			if (bmp != null) {
-				// 最近访问的放到最前排
+				// 鏈�杩戣闂殑鏀惧埌鏈�鍓嶆帓
 				firstCache.remove(url);
 				firstCache.put(url, bmp);
 			}
@@ -74,7 +74,7 @@ public class BitmapCache {
 		if (ref != null) {
 			bmp = ref.get();
 			if (bmp == null) {
-				// 已经被gc回收
+				// 宸茬粡琚玤c鍥炴敹
 				secondCache.remove(url);
 			}
 		}
