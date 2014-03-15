@@ -101,6 +101,9 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 
 	@Override
 	public Object getItem(int position) {
+		if (position > 0) {
+			return list.get(position - 1);
+		}
 		return list.get(position);
 	}
 
@@ -136,13 +139,16 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 		holder.textAuthor.setText(item.getAuthor());
 
 		holder.imageBookmark.setVisibility(item.isBookmark() ? View.VISIBLE : View.GONE);
-		holder.imagePreview.setVisibility(View.GONE);
-		holder.progress.setVisibility(View.GONE);
 
 		final String fUrl = item.getPreview();
 		final long fId = item.getId();
 
-		if (fUrl != null) {
+		if (fUrl == null) {
+			// ÎÞÍ¼Æ¬
+			holder.imagePreview.setVisibility(View.GONE);
+			holder.progress.setVisibility(View.GONE);
+
+		} else {
 			holder.progress.setVisibility(View.VISIBLE);
 			holder.imagePreview.setImageBitmap(null);
 			holder.imagePreview.setVisibility(View.VISIBLE);
@@ -247,7 +253,7 @@ public class ArchiveListAdapter extends BaseAdapter implements OnScrollListener 
 			if (!isLoadingMore) {
 				// »¬¶¯¶¯»­Í£Ö¹
 				int count = getCount();
-				if (count > 0 && (this.firstItemIndex + this.visibleItemCount >= count)) {
+				if (count > 0 && (this.firstItemIndex + this.visibleItemCount > count)) {
 					if (onLoadMore != null) {
 						isLoadingMore = true;
 						listView.setFooterVisible(true);
